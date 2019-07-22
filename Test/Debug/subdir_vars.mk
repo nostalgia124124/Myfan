@@ -8,26 +8,32 @@ CMD_SRCS += \
 
 C_SRCS += \
 ../main.c \
+../myPID.c \
 ../myfan.c 
 
 OBJS += \
 ./main.obj \
+./myPID.obj \
 ./myfan.obj 
 
 C_DEPS += \
 ./main.pp \
+./myPID.pp \
 ./myfan.pp 
 
 C_DEPS__QUOTED += \
 "main.pp" \
+"myPID.pp" \
 "myfan.pp" 
 
 OBJS__QUOTED += \
 "main.obj" \
+"myPID.obj" \
 "myfan.obj" 
 
 C_SRCS__QUOTED += \
 "../main.c" \
+"../myPID.c" \
 "../myfan.c" 
 
 

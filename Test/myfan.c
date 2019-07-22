@@ -8,7 +8,7 @@
 #include <myfan.h>
 
 int MYLED_TABLE[10] = {0xC0,0xF9,0xA4,0xB0,0x99,0x92,0x82,0xF8,0x80,0x90};
-volatile unsigned int PWMCount,SetPWM = 0;
+extern volatile unsigned int SetPWM;
 
 void ADS7950_PORT_Init()
 {
@@ -35,7 +35,7 @@ unsigned int ADS7950_ReadResultAndSetNextSample(unsigned int uiSendData)
 
 	  ADS7950_CS_HIGH;
 	  ADS7950_SCLK_LOW;
-	  __delay_cycles(30);//delay 20ns at least
+	  __delay_cycles(25);//delay 20ns at least
 	  ADS7950_CS_LOW;
 	  __delay_cycles(30);//delay 40ns at least  for the first SDO
 
@@ -53,12 +53,12 @@ unsigned int ADS7950_ReadResultAndSetNextSample(unsigned int uiSendData)
 		    if(( ADS7950_IN & SDO)== SDO) result |= 0x0001;
 
 		    //delay 20ns at least  to set sclk high
-		    __delay_cycles(50);
+		    __delay_cycles(25);
 
 		    ADS7950_SCLK_HIGH; //rising edge of SCLK, latch one bit
-		    __delay_cycles(50);
+		    __delay_cycles(25);
 		    ADS7950_SCLK_LOW;  //falling edge of SCLK, SDO clocks on one bit
-		    __delay_cycles(50);
+		    __delay_cycles(25);
 	  }
 
 	  ADS7950_CS_HIGH;
@@ -66,6 +66,18 @@ unsigned int ADS7950_ReadResultAndSetNextSample(unsigned int uiSendData)
 
 	  return result;
 
+}
+
+volatile unsigned int ADC_Value;
+int updataADVALUE(){
+	volatile unsigned int ADC_CH, SPI_Result;
+    	SPI_Result = ADS7950_ReadResultAndSetNextSample(MODE_MANUAL_CH3);
+    	ADC_CH = SPI_Result >> 12;
+    	if(ADC_CH == 3){				//判断读取通道是否正确
+    		ADC_Value = SPI_Result & 0x0FFF;//低12位为AD值
+    		return 1;
+    	}
+    	else return 0;
 }
 
 /*  fuction: initilize Scan Keyboard
@@ -136,7 +148,7 @@ void LED_Show(unsigned int NUM,int type){
 	if(type == 0){
 
 		P8OUT = MYLED_TABLE[NUM%10];
-		P11OUT &= ~SET_N3;
+		P11OUT &= ~SET_N3; // P11.0 = 0
 		NUM /= 10;
 		__delay_cycles(100);
 		P11OUT |= 0x07;
@@ -173,7 +185,7 @@ void LED_Show(unsigned int NUM,int type){
 	}
 }
 
-/*  fuction: initilize Timer0
+/*  fuction: initilize Timer1.2 output PWM
  *  author:  Ding
  */
 void Motor_init(){
@@ -185,7 +197,31 @@ void Motor_init(){
 	TA1CTL = TASSEL_2 + ID_1 + MC_1 + TACLR;     // SMCLK, 增计数模式, 清除
 }
 
+/*  fuction: initilize Clock
+ *  author:  KanKan
+ */
 
+void initClock()
+{
+	/*//产生振荡频率
+	P5SEL |= BIT2 + BIT3; 										//XT2引脚功能选择
+	UCSCTL6 &= ~XT2OFF; 										//启动XT2
+
+	UCSCTL4 |= SELA__XT2CLK + SELS__XT2CLK + SELM__XT2CLK; 		//避免DCO调整中跑飞
+	UCSCTL5 |= DIVA__32 + DIVS__32 + DIVM__2; 						*///设定几个CLK的分频
+
+	TA0CCTL0 |= CCIE;							//允许中断
+	TA0CCR0 = 3000;							//定时5ms
+	TA0CTL |= TASSEL_1 + MC_1 + TACLR + ID_0;     // SMCLK, 增计数模式, 清除TAR计数器
+    _bis_SR_register(GIE);  // 进入LPM0,使能中断
+}
+
+extern volatile unsigned int PID_flag;
+#pragma vector=TIMER0_A0_VECTOR
+__interrupt void TIMER0_A0(void)
+{
+	PID_flag = 1;
+}
 
 
 

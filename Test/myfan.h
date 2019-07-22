@@ -34,6 +34,7 @@
 
 void ADS7950_PORT_Init();
 unsigned int ADS7950_ReadResultAndSetNextSample(unsigned int uiSendData);
+int updataADVALUE();
 
 //KeyBoard
 #define SW1         (BIT4)    //SW1
@@ -62,5 +63,7 @@ void LED_Show(unsigned int NUM,int type);
 #define Set_Motor_Low  (P2OUT &= ~BIT3)
 void Motor_init();
 void Timer_init();
+__interrupt void TIMER0_A0(void);
+void initClock();
 
 #endif /* MYFAN_H_ */

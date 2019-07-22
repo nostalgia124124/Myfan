@@ -11,6 +11,7 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./main.obj" \
+"./myPID.obj" \
 "./myfan.obj" \
 "../lnk_msp430f5438a.cmd" \
 $(GEN_CMDS__FLAG) \
@@ -151,8 +152,8 @@ Test.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)$(BIN_OUTPUTS__QUOTED)
-	-$(RM) "main.pp" "myfan.pp" 
-	-$(RM) "main.obj" "myfan.obj" 
+	-$(RM) "main.pp" "myPID.pp" "myfan.pp" 
+	-$(RM) "main.obj" "myPID.obj" "myfan.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
