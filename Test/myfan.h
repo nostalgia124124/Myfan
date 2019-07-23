@@ -6,7 +6,7 @@
  */
 
 #ifndef MYFAN_H_
-
+#define MYFAN_H_
 
 //AD
 #define SCLK         (BIT5)    //sclk

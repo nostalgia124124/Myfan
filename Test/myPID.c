@@ -7,7 +7,7 @@
 #include <msp430f5438.h>
 #include<myPID.h>
 
-volatile int lasterror,sumerror,error,derror;
+volatile int lasterror,sumerror,error,derror,lastAD;
 volatile unsigned int PID_flag;
 extern volatile unsigned int SetPWM;
 extern volatile unsigned int ADC_Value;
@@ -21,9 +21,13 @@ void PID_Clear(){
 
 int PID_Cal(){
 	error = SetPWM - ADC_Value/5;
-	derror = error - lasterror;
+	//derror = error - lasterror;
+	lastAD = ADC_Value;
+	derror = (ADC_Value - lastAD)/5;
 	sumerror += error;
-	lasterror = error;
+	//if(sumerror > 800) sumerror = 800;
+	//else if(sumerror < -800) sumerror = -800;
+	//lasterror = error;
 	return (int)(PC*error+IC*sumerror+DC*derror);
 }
 

@@ -150,18 +150,18 @@ void LED_Show(unsigned int NUM,int type){
 		P8OUT = MYLED_TABLE[NUM%10];
 		P11OUT &= ~SET_N3; // P11.0 = 0
 		NUM /= 10;
-		__delay_cycles(100);
+		__delay_cycles(80);
 		P11OUT |= 0x07;
 
 		P8OUT = MYLED_TABLE[NUM%10];
 		P3OUT &= ~SET_N2;
 		NUM /= 10;
-		__delay_cycles(100);
+		__delay_cycles(80);
 		P3OUT |= 0x31;
 
 		P8OUT = MYLED_TABLE[NUM];
 		P3OUT &= ~SET_N1;
-		__delay_cycles(100);
+		__delay_cycles(80);
 		P3OUT |= 0x31;
 	}
 	else{
@@ -169,18 +169,18 @@ void LED_Show(unsigned int NUM,int type){
 		P8OUT = MYLED_TABLE[NUM%10];
 		P1OUT &= ~REAL_N3;
 		NUM /= 10;
-		__delay_cycles(100);
+		__delay_cycles(80);
 		P1OUT |= 0xC0;
 
 		P8OUT = MYLED_TABLE[NUM%10];
 		P1OUT &= ~REAL_N2;
 		NUM /= 10;
-		__delay_cycles(100);
+		__delay_cycles(80);
 		P1OUT |= 0xC0;
 
 		P8OUT = MYLED_TABLE[NUM];
 		P11OUT &= ~REAL_N1;
-		__delay_cycles(100);
+		__delay_cycles(80);
 		P11OUT |= 0x07;
 	}
 }
@@ -211,7 +211,7 @@ void initClock()
 	UCSCTL5 |= DIVA__32 + DIVS__32 + DIVM__2; 						*///设定几个CLK的分频
 
 	TA0CCTL0 |= CCIE;							//允许中断
-	TA0CCR0 = 3000;							//定时5ms
+	TA0CCR0 = 3000;							//定时3ms
 	TA0CTL |= TASSEL_1 + MC_1 + TACLR + ID_0;     // SMCLK, 增计数模式, 清除TAR计数器
     _bis_SR_register(GIE);  // 进入LPM0,使能中断
 }

@@ -25,13 +25,16 @@ int main(void) {
     while(1){
     	if(PID_flag){
 			if(updataADVALUE() == 1){
-				ADC_SHOW = ADC_Value/5;
 				ADC_COUNT++;
 				SetMotorV();
 				PID_flag = 0;
 			}
     	}
-    	if(ADC_COUNT > 5) sumerror = 0;
+    	if(ADC_COUNT > 7) {
+    		sumerror = 0;
+    		ADC_SHOW = ADC_Value/5;
+    		ADC_COUNT = 0;
+    	}
     	LED_Show(ADC_SHOW,1);
 		LED_Show(SetPWM,0);
     	//LED_Show(269,1);
